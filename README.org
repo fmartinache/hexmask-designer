@@ -1,0 +1,28 @@
+#+TITLE: Hexmask Designer
+#+AUTHOR: Frantz Martinache
+
+GUI tool to help with the design of interferometric sparse aperture masks with apertures falling on a hex-grid
+
+* What is this about?
+
+This is a python GUI based on the pygame library that is intended to help designing sparse aperture masks. The initial use case for this program is for the european ELT, but the program could be adapted to other scenarios. The application I have in mind is that of an interferometric wavefront sensor that would be suited to the diagnostic of petal modes for the ELT. The sparse mask is required if we want a capture domain that is possibly greater than a wave.
+
+Sub-apertures are expected to be laid out on a regular hexagonal grid so apertures that are added to the design or moved around snap to a hexagonal grid.
+
+* How does this work?
+
+The window is split into two parts:
+- left: pupil and sparse aperture mask
+- right: Fourier-plane of the sparse aperture mask
+
+The program tries to load an initial configuration file of mask hole Cartesian coordinates (expressed in units of the pitch of the grid). If none is present, the slate is blank and the user has to design the mask from scratch, adding sub-apertures wherever they are needed and/or moving them around. As soon as you have more than two sub-apertures, the right-hand side display refreshes and shows the Fourier-coverage of the mask on the left. The number displayed on top of the Fourier-plane "splodge" is the redundancy of the baseline.
+
+* Keys and use
+
+- Move the mouse over the pupil and add a sub-aperture by pressing "a" (for add).
+- Move the mouse over the pupil and remove the most nearby sub-aperture by pressing "d' (for delete).
+- Press the space bar to compute the properties of a model that would only consider the non-redundant baselines
+
+* Future possible improvements
+
+I'd love to be able, when hovering the mouse cursor over a "splodge" in the Fourier plane, to highlight in the pupil plane the different baselines that this corresponds to.
