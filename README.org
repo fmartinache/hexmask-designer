@@ -7,7 +7,7 @@ GUI tool to help with the design of interferometric sparse aperture masks with a
 
 This is a python GUI based on the pygame library that is intended to help designing sparse aperture masks. The initial use case for this program is for the european ELT, but the program could be adapted to other scenarios. The application I have in mind is that of an interferometric wavefront sensor that would be suited to the diagnostic of petal modes for the ELT. The sparse mask is required if we want a capture domain that is possibly greater than a wave.
 
-Sub-apertures are expected to be laid out on a regular hexagonal grid so apertures that are added to the design or moved around snap to a hexagonal grid.
+Sub-apertures are expected to be laid out on a regular hexagonal grid so apertures that are added to the design or moved around snap to a hexagonal grid. The tool also assumes that my =xara= python library was downloaded and is installed for your current python environment.
 
 * How does this work?
 
@@ -21,8 +21,9 @@ The program tries to load an initial configuration file of mask hole Cartesian c
 
 - Move the mouse over the pupil and add a sub-aperture by pressing "a" (for add).
 - Move the mouse over the pupil and remove the most nearby sub-aperture by pressing "d' (for delete).
-- Press the space bar to compute the properties of a model that would only consider the non-redundant baselines
+- Press the space bar to compute the properties of a model that would only consider the non-redundant baselines. You have to check the output of your terminal to see the result of this computation.
+- Save the current model to a text file called =mymask.txt= by pressing "s" (for save). This will overwrite the file if it already exists, so make sure to back it up.
 
-* Future possible improvements
+* Future improvements
 
-I'd love to be able, when hovering the mouse cursor over a "splodge" in the Fourier plane, to highlight in the pupil plane the different baselines that this corresponds to.
+I'd love to be able, when hovering the mouse cursor over a "splodge" in the Fourier plane, to highlight in the pupil plane the different baselines that this corresponds to. I think it'd be quite instructive for people still trying to wrap their heads around interferometry.
