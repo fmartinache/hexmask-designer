@@ -19,38 +19,52 @@ def hex_grid_coords(nr=5, rr=1.0, rot=0.0):
 
 # =============================================================================
 def elt_grid_coords(rr=1.0):
-    nr = 15  # for the ELT, no choice
-    xx0, yy0 = hex_grid_coords(nr=nr, rr=rr)
-    keep = np.sqrt(xx0**2+yy0**2) <= nr * rr * np.sqrt(3) / 2
+    ''' -----------------------------------------------------------
+    returns the (x,y) coordinates of active segments of the ELT
+
+    Parameters:
+    ----------
+    - rr: the pitch of the segments
+
+    Note:
+    ----
+    - for the actual ELT, the picth is equal to 1.4 meters
+    - considers the segments falling under the spiders as missing
+    ----------------------------------------------------------- '''
+    nr = 18  # for the ELT, no choice
+    no = 4   # idem for the central obstruction
+    
+    xx, yy = hex_grid_coords(nr=nr, rr=rr)
+    xxo, yyo = hex_grid_coords(nr=4, rr=rr, rot=0.0)
+
+    for ii, test in enumerate(xxo):
+        throw = (xxo[ii] == xx) * (yyo[ii] == yy)
+        xx = np.delete(xx, throw)
+        yy = np.delete(yy, throw)
+
+    keep = np.sqrt(xx**2 + yy**2) < (nr - 0.1) * rr * np.sqrt(3) / 2
     spider = np.logical_not(
-        (yy0 == 0) + (yy0 == np.sqrt(3) * xx0) + (yy0 == -np.sqrt(3) * xx0))
+        (yy == 0) + (yy == np.sqrt(3) * xx) + (yy == -np.sqrt(3) * xx))
     keep = keep * spider
-    return xx0[keep], yy0[keep]
+    return xx[keep], yy[keep]
 
 
-nr = 15    # number of rings for the ELT
 rr = 1.0   # radius of the rings
-nro = 4    # number of rings of the obstruction
-reso = 25  # resolution factor for the display
 xxt, yyt = elt_grid_coords(rr)     # telescope grid coordinates
-xxo, yyo = hex_grid_coords(4, rr)  # central obstruction coordinates
 nseg = len(xxt)
 
 # =============================================================================
 #                         pygame specific setup
 # =============================================================================
 WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 
 HOLE_COLOR = (255, 0, 0)
 TEL_COLOR = (0, 128, 128)
-COT_COLOR = (128, 128, 128)
 UV_COLOR = (0, 128, 0)
 
-WSZ = 750
+WSZ = 900  # window height size (actual is (2*WSZ x WSZ))
+reso = 27  # resolution factor for the display
 
 WIN_XSZ, WIN_YSZ = 2*WSZ, WSZ
 p0 = np.array([WSZ//2, WSZ//2])
@@ -94,6 +108,7 @@ nuv = 0     # number of baselines
 mask_fname = "./mymask.txt"  # name of coordinate mask saved
 
 if os.path.exists(mask_fname):
+    print("found default mask configuration file!")
     mask = np.loadtxt(mask_fname)
     nh = len(mask)
 
@@ -106,7 +121,7 @@ if os.path.exists(mask_fname):
 
     updt_flag = True
 
-breakpoint()
+# breakpoint()
 # ----------------------
 # labels for the display
 # ----------------------
@@ -176,7 +191,6 @@ def snap_hole(xx, yy):
 
 
 draw_telescope_feature(xxt, yyt, reso=reso, color=TEL_COLOR)
-draw_telescope_feature(xxo, yyo, reso=reso, color=COT_COLOR)
 
 pygame.display.update()
 
@@ -297,7 +311,6 @@ while keepgoing:
     # ----------------------
     screen.fill(WHITE)
     draw_telescope_feature(xxt, yyt, reso=reso, color=TEL_COLOR)
-    draw_telescope_feature(xxo, yyo, reso=reso, color=COT_COLOR)
 
     if mdl is not None:
         draw_uv_plane(np.array([0]), np.array([0]),
