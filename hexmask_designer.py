@@ -33,9 +33,9 @@ def elt_grid_coords(rr=1.0):
     ----------------------------------------------------------- '''
     nr = 18  # for the ELT, no choice
     no = 4   # idem for the central obstruction
-    
+
     xx, yy = hex_grid_coords(nr=nr, rr=rr)
-    xxo, yyo = hex_grid_coords(nr=4, rr=rr, rot=0.0)
+    xxo, yyo = hex_grid_coords(nr=no, rr=rr, rot=0.0)
 
     for ii, test in enumerate(xxo):
         throw = (xxo[ii] == xx) * (yyo[ii] == yy)
@@ -58,10 +58,14 @@ nseg = len(xxt)
 # =============================================================================
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+SALMON = (250, 128, 114)
+AZURE = (0, 128, 255)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
 
-HOLE_COLOR = (255, 0, 0)
+HOLE_COLOR = RED
 TEL_COLOR = (0, 128, 128)
-UV_COLOR = (0, 128, 0)
 
 WSZ = 900  # window height size (actual is (2*WSZ x WSZ))
 reso = 27  # resolution factor for the display
@@ -300,11 +304,14 @@ while keepgoing:
             # update the redundancy labels!
             uvfont = pygame.font.Font('freesansbold.ttf', fsize)
             for ii in range(mdl.nbuv):
+                thiscolor = BLACK
+                if mdl.RED[ii] == 1:
+                    thiscolor = AZURE
                 uvsurfs.append(
-                    uvfont.render("%d" % (mdl.RED[ii]), True, WHITE, BLACK))
+                    uvfont.render("%d" % (mdl.RED[ii]), True, thiscolor, WHITE))
                 uvrects.append(uvsurfs[ii].get_rect())
                 uvrects[ii].center = uvdc[ii]
-                uvsurfs[ii].set_colorkey(BLACK)
+                uvsurfs[ii].set_colorkey(WHITE)
         updt_flag = False
 
     # 3. refresh the display
@@ -316,12 +323,15 @@ while keepgoing:
         draw_uv_plane(np.array([0]), np.array([0]),
                       reso=reso, color=BLACK)
         draw_uv_plane(mdl.UVC[:, 0] / 2, mdl.UVC[:, 1] / 2,
-                      reso=reso, color=(255, 0, 0))
+                      reso=reso, color=SALMON)
         draw_uv_plane(-mdl.UVC[:, 0] / 2, -mdl.UVC[:, 1] / 2,
-                      reso=reso, color=(0, 0, 255))
+                      reso=reso, color=BLUE)
+
+        # redundancy labels
         for ii in range(mdl.nbuv):
             screen.blit(uvsurfs[ii], uvrects[ii])
 
+        # figure "titles"
         for ii, lbl in enumerate(lblrects):
             screen.blit(lblsurfs[ii], lblrects[ii])
 
